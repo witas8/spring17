@@ -1,5 +1,7 @@
 package com.example.spring17.service;
 
+import com.example.spring17.exceptions.BadRequestException;
+import com.example.spring17.exceptions.NotFoundException;
 import com.example.spring17.model.User;
 import com.example.spring17.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User saveUser(User user) {
+        Boolean doesUsernameExist = userRepo.checkUsernameUniqueness(user.getUsername());
+        Boolean doesEmailExist = userRepo.checkEmailUniqueness(user.getEmail());
+
+        if (doesUsernameExist) {
+            throw new BadRequestException(
+                    "Username " + user.getUsername() + " is already taken");
+        }
+
+        if (doesEmailExist) {
+            throw new BadRequestException(
+                    "Email " + user.getEmail() + " is already taken");
+        }
+
         log.info("Saving new user {} to the database", user.getUsername());
         return userRepo.save(user);
     }
@@ -33,24 +48,61 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> getUserById(Long id) {
+        if(!userRepo.existsById(id)) {
+            throw new NotFoundException(
+                    "User with id " + id + " does not exists");
+        }
+
+        return userRepo.findById(id);
+    }
+
+    @Override
     public List<User> getAllUsers() {
         return userRepo.findAll();
     }
 
     @Override
     public void deleteUserById(Long id) {
+        if(!userRepo.existsById(id)) {
+            throw new NotFoundException(
+                    "User with id " + id + " does not exists");
+        }
+
+        User user = userRepo.findById(id).orElseThrow(null);
+        log.info("User with id {}, name {}, last name {} and email {} is deleted from the database.",
+                user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());
         userRepo.findById(id).ifPresent(userRepo::delete);
     }
 
     @Override
-    public void deleteUser(User user) {
-        userRepo.delete(user);
+    public Optional<User> updateUser(Long id, User updatedUser) {
+        User userToBeUpdated = userRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("User by id " + id + " does not exist."));
+        if(userToBeUpdated != null) {
+            if(updatedUser.getFirstName() != null) userToBeUpdated.setFirstName(updatedUser.getFirstName());
+            if(updatedUser.getLastName() != null) userToBeUpdated.setLastName(updatedUser.getLastName());
+            if(updatedUser.getUsername() != null) userToBeUpdated.setUsername(updatedUser.getUsername());
+            if(updatedUser.getRole() != null) userToBeUpdated.setRole(updatedUser.getRole());
+            if(updatedUser.getEmail() != null) userToBeUpdated.setEmail(updatedUser.getEmail());
+            if(updatedUser.getPhone() != null) userToBeUpdated.setPhone(updatedUser.getPhone());
+            userRepo.findById(id).ifPresent(userRepo::save);
+        }
+
+        log.info("User with id {} has been updated ", id);
+        return userRepo.findById(id);
     }
 
-//    @Override
-//    public Optional<User> updateUserEmail(User user) {
-//       userRepo.findById(user.getId()).ifPresent(u -> user.setEmail(user.getEmail()));
-//       return userRepo.findById(user.getId());
-//    }
+    @Override
+    public Optional<User> updatePassword(Long id, String password) {
+        if(password != null){
+            userRepo.findById(id).ifPresentOrElse(u -> u.setPassword(password),
+                    () -> { throw new NotFoundException("User by id " + id + " does not exist."); }
+            );
+            userRepo.findById(id).ifPresent(userRepo::save);
+        }
 
+        log.info("User with id {} has updated a password", id);
+        return userRepo.findById(id);
+    }
 }
