@@ -1,7 +1,9 @@
 package com.example.spring17.controller;
 
 
+import com.example.spring17.exceptions.BadRequestException;
 import com.example.spring17.model.User;
+import com.example.spring17.repository.UserRepo;
 import com.example.spring17.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,8 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final UserRepo userRepo;
+
 
     @GetMapping("/error")
     public String error(){
@@ -30,6 +34,11 @@ public class UserController {
     @GetMapping("/user/{username}")
     public ResponseEntity<User> getUser(@PathVariable("username") String username){
         return ResponseEntity.ok().body(userService.getUser(username));
+    }
+
+    @GetMapping("/userid/{id}")
+    public ResponseEntity<Optional<User>> getUsersById(@PathVariable("id") Long id){
+        return ResponseEntity.ok().body(userService.getUserById(id));
     }
 
     @GetMapping("/users")
@@ -48,15 +57,15 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("user/delete")
-    public ResponseEntity<?> deleteUser(@RequestBody User user){
-        userService.deleteUser(user);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PutMapping("/user/update/{userid}")
+    public ResponseEntity<Optional<User>> updateUser(@PathVariable("userid") Long id, @RequestBody User user){
+        return ResponseEntity.ok().body(userService.updateUser(id, user));
     }
 
-    /*@PutMapping("/update/email")
-    public ResponseEntity<Optional<User>> updateUserEmail(@RequestBody User user){
-        return ResponseEntity.ok().body(userService.updateUserEmail(user));
-    }*/
+    @PutMapping("/user/update/{userid}/{password}")
+    public ResponseEntity<Optional<User>> updatePassword(@RequestParam("userid") Long id,
+                                                         @RequestParam("password") String password){
+        return ResponseEntity.ok().body(userService.updatePassword(id, password));
+    }
 
 }
