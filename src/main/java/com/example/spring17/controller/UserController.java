@@ -1,71 +1,74 @@
 package com.example.spring17.controller;
 
 
-import com.example.spring17.exceptions.BadRequestException;
-import com.example.spring17.model.User;
-import com.example.spring17.repository.UserRepo;
-import com.example.spring17.service.UserService;
+import com.example.spring17.model.user.dto.UpdatePasswordDTO;
+import com.example.spring17.model.user.dto.UserDTO;
+import com.example.spring17.model.user.entity.User;
+import com.example.spring17.service.user.UserServiceDeleter;
+import com.example.spring17.service.user.UserServiceSaver;
+import com.example.spring17.service.user.UserServiceSelector;
+import com.example.spring17.service.user.UserServiceUpdater;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/spring17")
+@RequestMapping("/spring17/user")
 @AllArgsConstructor
 @Slf4j
 public class UserController {
 
-    private final UserService userService;
-    private final UserRepo userRepo;
+    private final UserServiceSelector userServiceSelector;
+    private final UserServiceSaver userServiceSaver;
+    private final UserServiceUpdater userServiceUpdater;
+    private final UserServiceDeleter userServiceDeleter;
 
-
-    @GetMapping("/error")
-    public String error(){
-        return "Error. Please contact administrator.";
+    @GetMapping("/all")
+    public ResponseEntity<List<UserDTO>> getUsers(){
+        return ResponseEntity.ok().body(userServiceSelector.getAllUsers());
     }
 
-    @GetMapping("/user/{username}")
-    public ResponseEntity<User> getUser(@PathVariable("username") String username){
-        return ResponseEntity.ok().body(userService.getUser(username));
+    @GetMapping("/id/{id}")
+    public ResponseEntity<Optional<UserDTO>> getUsersById(@PathVariable("id") Long id){
+        return ResponseEntity.ok().body(userServiceSelector.getUserById(id));
     }
 
-    @GetMapping("/userid/{id}")
-    public ResponseEntity<Optional<User>> getUsersById(@PathVariable("id") Long id){
-        return ResponseEntity.ok().body(userService.getUserById(id));
+    @GetMapping("/username/{username}")
+    public ResponseEntity<UserDTO> getUserByUsername(@PathVariable("username") String username){
+        return ResponseEntity.ok().body(userServiceSelector.getUser(username));
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<List<User>> getUsers(){
-        return ResponseEntity.ok().body(userService.getAllUsers());
+    @GetMapping("/email/{email}")
+    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable("email") String email){
+        return ResponseEntity.ok().body(userServiceSelector.getUserByEmail(email));
     }
 
-    @PostMapping("/user/save")
-    public ResponseEntity<User> saveUser(@RequestBody User user){
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUser(user));
+    @PostMapping()
+    public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO){
+        return ResponseEntity.status(HttpStatus.CREATED).body(userServiceSaver.saveUser(userDTO));
     }
 
-    @DeleteMapping("user/delete/{id}")
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable("id") Long id, @RequestBody UserDTO userDTO){
+        return ResponseEntity.ok().body(userServiceUpdater.updateUser(id, userDTO));
+    }
+
+    //TODO: create login functionality with proper user updating
+    @PutMapping("/{userid}/password")
+    public ResponseEntity<Optional<UserDTO>> updatePassword(@RequestParam("userid") Long id,
+                                                         @RequestBody UpdatePasswordDTO updatePasswordDTO){
+        return ResponseEntity.ok().body(userServiceUpdater.updatePassword(id, updatePasswordDTO));
+    }
+
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable("id") Long id){
-        userService.deleteUserById(id);
+        userServiceDeleter.deleteUserById(id);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PutMapping("/user/update/{userid}")
-    public ResponseEntity<Optional<User>> updateUser(@PathVariable("userid") Long id, @RequestBody User user){
-        return ResponseEntity.ok().body(userService.updateUser(id, user));
-    }
-
-    @PutMapping("/user/update/{userid}/{password}")
-    public ResponseEntity<Optional<User>> updatePassword(@RequestParam("userid") Long id,
-                                                         @RequestParam("password") String password){
-        return ResponseEntity.ok().body(userService.updatePassword(id, password));
     }
 
 }
