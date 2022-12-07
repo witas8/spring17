@@ -2,8 +2,8 @@ package com.example.spring17.service.user;
 
 import com.example.spring17.exceptions.NotFoundException;
 import com.example.spring17.mapper.UserMapper;
-import com.example.spring17.model.user.dto.UpdatePasswordDTO;
-import com.example.spring17.model.user.dto.UserDTO;
+import com.example.spring17.model.curiosity.user.dto.UpdatePasswordDTO;
+import com.example.spring17.model.curiosity.user.dto.UserDTO;
 import com.example.spring17.repository.UserRepo;
 import com.example.spring17.validators.UserValidator;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class UserServiceUpdater {
     private final UserValidator userValidator;
 
     public UserDTO updateUser(Long id, UserDTO updatedUserDTO) {
-        userValidator.validateBeforeSaving(updatedUserDTO);
+        //userValidator.validateBeforeSaving(updatedUserDTO);
         return userRepo.findById(id)
                 .map(user -> userMapper.mapUpdatedDtoToEntity(updatedUserDTO, user))
                 .map(userRepo::save)

@@ -2,7 +2,6 @@ package com.example.spring17.controller;
 
 import com.example.spring17.model.curiosity.dto.CuriosityDTO;
 import com.example.spring17.model.curiosity.entity.Curiosity;
-import com.example.spring17.model.user.dto.UserDTO;
 import com.example.spring17.service.curiosity.CuriosityServiceDeleter;
 import com.example.spring17.service.curiosity.CuriosityServiceSelector;
 import com.example.spring17.service.curiosity.CuriosityServiceSever;

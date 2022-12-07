@@ -2,8 +2,8 @@ package com.example.spring17.validators;
 
 import com.example.spring17.exceptions.BadRequestException;
 import com.example.spring17.exceptions.NotFoundException;
-import com.example.spring17.model.user.dto.UserDTO;
-import com.example.spring17.model.user.entity.Roles;
+import com.example.spring17.model.curiosity.user.dto.UserSaveDTO;
+import com.example.spring17.model.curiosity.user.entity.Roles;
 import com.example.spring17.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
@@ -19,14 +19,13 @@ public class UserValidator {
 
     private final UserRepo userRepo;
 
-
-    public void validateBeforeSaving(UserDTO userDTO){
-        validateUserExistence(userDTO.username());
-        validateName(userDTO.firstName());
-        validateName(userDTO.lastName());
-        validateEmailExistence(userDTO.email());
-        validatePhoneNumberLength(userDTO.phone());
-        validateRole(userDTO.role());
+    public void validateBeforeSaving(UserSaveDTO userSaveDTO){
+        validateUserExistence(userSaveDTO.username());
+        validateName(userSaveDTO.firstName());
+        validateName(userSaveDTO.lastName());
+        validateEmailExistence(userSaveDTO.email());
+        validatePhoneNumberLength(userSaveDTO.phone());
+        validateRole(userSaveDTO.role());
     }
 
     public void validateIfExists(Long id){

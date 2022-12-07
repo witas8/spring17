@@ -1,3 +1,10 @@
+#server:
+#  port: 8080
+#  servlet:
+#    session:
+#      cookie:
+#        name: TSESSION
+#        http-only: true #decide if front-end cannot have the access to token (true=cannot)
 spring:
   mvc:
     pathmatch:

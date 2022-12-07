@@ -2,7 +2,7 @@ package com.example.spring17.service.user;
 
 import com.example.spring17.exceptions.NotFoundException;
 import com.example.spring17.mapper.UserMapper;
-import com.example.spring17.model.user.dto.UserDTO;
+import com.example.spring17.model.curiosity.user.dto.UserDTO;
 import com.example.spring17.repository.UserRepo;
 import com.example.spring17.validators.UserValidator;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,7 +26,9 @@ public class UserServiceSelector {
     private final UserValidator userValidator;
 
     public List<UserDTO> getAllUsers() {
-        return userRepo.findAll().stream().map(userMapper::mapUserToDTO).collect(Collectors.toList());
+        return userRepo.findAll().stream()
+                .map(userMapper::mapUserToDTO)
+                .collect(Collectors.toList());
     }
 
     public UserDTO getUser(String username) {
@@ -43,9 +44,11 @@ public class UserServiceSelector {
                 .orElseThrow(() -> new NotFoundException("User", "email", email));
     }
 
-    public Optional<UserDTO> getUserById(Long id) {
+    public UserDTO getUserById(Long id) {
         userValidator.validateIfExists(id);
-        return userRepo.findById(id).map(userMapper::mapUserToDTO);
+        return userRepo.findById(id)
+                .map(userMapper::mapUserToDTO)
+                .orElseThrow(() -> new NotFoundException("User", "id", id.toString()));
     }
 
 }

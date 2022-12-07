@@ -4,7 +4,6 @@ import com.example.spring17.exceptions.NotFoundException;
 import com.example.spring17.mapper.CuriosityMapper;
 import com.example.spring17.model.curiosity.dto.CuriosityDTO;
 import com.example.spring17.model.curiosity.entity.Curiosity;
-import com.example.spring17.model.user.dto.UserDTO;
 import com.example.spring17.repository.CuriosityRepo;
 import com.example.spring17.service.user.UserServiceSelector;
 import lombok.RequiredArgsConstructor;

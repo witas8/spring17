@@ -2,9 +2,7 @@ package com.example.spring17.utils;
 
 public class Constants {
 
-    private Constants(){
-
-    }
+    private Constants(){}
 
     public final static String BAD_REQUEST_TAKEN = " is already taken...";
     public final static String BAD_REQUEST_FORMAT = " has a wrong format.";

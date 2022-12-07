@@ -1,6 +1,6 @@
 package com.example.spring17.model.curiosity.entity;
 
-import com.example.spring17.model.user.entity.User;
+import com.example.spring17.model.curiosity.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -26,6 +26,7 @@ public class Curiosity {
 
     @Enumerated(EnumType.STRING)
     private Categories category;
+    @Column(unique=true)
     private String question;
     private String answer;
     private boolean accepted;

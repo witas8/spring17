@@ -1,7 +1,5 @@
-package com.example.spring17.model.user.dto;
+package com.example.spring17.model.curiosity.user.dto;
 
-import com.example.spring17.model.user.entity.Roles;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import org.springframework.lang.Nullable;
 import java.io.Serializable;

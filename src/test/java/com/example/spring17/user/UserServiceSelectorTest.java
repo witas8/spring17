@@ -1,8 +1,6 @@
 package com.example.spring17.user;
 
 import com.example.spring17.mapper.UserMapper;
-import com.example.spring17.model.user.dto.UserDTO;
-import com.example.spring17.model.user.entity.User;
 import com.example.spring17.repository.UserRepo;
 import com.example.spring17.service.user.UserServiceSelector;
 import org.junit.jupiter.api.DisplayName;

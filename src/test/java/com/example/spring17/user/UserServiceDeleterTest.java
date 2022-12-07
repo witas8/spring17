@@ -1,6 +1,6 @@
 package com.example.spring17.user;
 
-import com.example.spring17.model.user.entity.User;
+import com.example.spring17.model.curiosity.user.entity.User;
 import com.example.spring17.repository.UserRepo;
 import com.example.spring17.service.user.UserServiceDeleter;
 import org.junit.jupiter.api.DisplayName;

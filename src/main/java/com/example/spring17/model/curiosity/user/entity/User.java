@@ -1,11 +1,8 @@
-package com.example.spring17.model.user.entity;
+package com.example.spring17.model.curiosity.user.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.hibernate.Hibernate;
 import org.springframework.lang.Nullable;
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -26,12 +23,12 @@ public class User {
     @Column(unique=true)
     private String username;
 
-    @Nullable
-    @JsonProperty(access =  JsonProperty.Access.WRITE_ONLY)
+    //@Nullable
+    //@JsonProperty(access =  JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Roles role; //Roles
+    private Roles role;
     @Column(unique=true)
     private String email;
     private String phone;

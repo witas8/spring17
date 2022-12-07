@@ -2,8 +2,8 @@ package com.example.spring17.curiosity;
 
 import com.example.spring17.model.curiosity.entity.Categories;
 import com.example.spring17.model.curiosity.entity.Curiosity;
-import com.example.spring17.model.user.entity.Roles;
-import com.example.spring17.model.user.entity.User;
+import com.example.spring17.model.curiosity.user.entity.Roles;
+import com.example.spring17.model.curiosity.user.entity.User;
 import com.example.spring17.repository.CuriosityRepo;
 import com.example.spring17.repository.UserRepo;
 import com.example.spring17.service.curiosity.CuriosityServiceSelector;

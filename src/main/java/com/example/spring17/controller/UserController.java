@@ -1,9 +1,10 @@
 package com.example.spring17.controller;
 
 
-import com.example.spring17.model.user.dto.UpdatePasswordDTO;
-import com.example.spring17.model.user.dto.UserDTO;
-import com.example.spring17.model.user.entity.User;
+import com.example.spring17.model.curiosity.user.dto.UpdatePasswordDTO;
+import com.example.spring17.model.curiosity.user.dto.UserDTO;
+import com.example.spring17.model.curiosity.user.dto.UserSaveDTO;
+import com.example.spring17.model.curiosity.user.entity.User;
 import com.example.spring17.service.user.UserServiceDeleter;
 import com.example.spring17.service.user.UserServiceSaver;
 import com.example.spring17.service.user.UserServiceSelector;
@@ -34,7 +35,7 @@ public class UserController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<Optional<UserDTO>> getUsersById(@PathVariable("id") Long id){
+    public ResponseEntity<UserDTO> getUsersById(@PathVariable("id") Long id){
         return ResponseEntity.ok().body(userServiceSelector.getUserById(id));
     }
 
@@ -49,8 +50,8 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO){
-        return ResponseEntity.status(HttpStatus.CREATED).body(userServiceSaver.saveUser(userDTO));
+    public ResponseEntity<User> createUser(@RequestBody UserSaveDTO userSaveDTO){
+        return ResponseEntity.status(HttpStatus.CREATED).body(userServiceSaver.saveUser(userSaveDTO));
     }
 
     @PutMapping("/{id}")
