@@ -14,8 +14,8 @@ public interface CuriosityRepo extends JpaRepository<Curiosity, Long> {
     @Query("SELECT c FROM Curiosity c WHERE c.accepted != true")
     List<Curiosity> findNotAccepted();
 
-    @Query("SELECT c FROM Curiosity c ORDER BY Likes DESC")
-    List<Curiosity> filerByLikes();
+    @Query("SELECT c FROM Curiosity c ORDER BY Likes DESC") //:param ORDER BY Likes DESC
+    List<Curiosity> filerByLikes(String param);
 
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN TRUE ELSE FALSE END FROM Curiosity c WHERE c.question = ?1")
     Boolean checkQuestionUniqueness(String question);

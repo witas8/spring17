@@ -1,13 +1,15 @@
 package com.example.spring17.service.user;
 
+import com.example.spring17.exceptions.BadRequestException;
 import com.example.spring17.exceptions.NotFoundException;
 import com.example.spring17.mapper.UserMapper;
-import com.example.spring17.model.curiosity.user.dto.UpdatePasswordDTO;
-import com.example.spring17.model.curiosity.user.dto.UserDTO;
+import com.example.spring17.model.user.dto.UpdatePasswordDTO;
+import com.example.spring17.model.user.dto.UserDTO;
 import com.example.spring17.repository.UserRepo;
 import com.example.spring17.validators.UserValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +27,10 @@ public class UserServiceUpdater {
 
     private final UserValidator userValidator;
 
+    private final PasswordEncoder passwordEncoder;
+
     public UserDTO updateUser(Long id, UserDTO updatedUserDTO) {
-        //userValidator.validateBeforeSaving(updatedUserDTO);
+        userValidator.validateBeforeUpdating(updatedUserDTO);
         return userRepo.findById(id)
                 .map(user -> userMapper.mapUpdatedDtoToEntity(updatedUserDTO, user))
                 .map(userRepo::save)
@@ -34,15 +38,16 @@ public class UserServiceUpdater {
                 .orElseThrow(() -> new NotFoundException("User", "id", id.toString()));
     }
 
-    //TODO password1 == password2
     public Optional<UserDTO> updatePassword(Long id, UpdatePasswordDTO updatePasswordDTO) {
-            userRepo.findById(id).ifPresentOrElse(u -> u.setPassword(updatePasswordDTO.password1()),
+        if(!updatePasswordDTO.password1().equals(updatePasswordDTO.password2())){
+            throw new BadRequestException("User", "password", false);
+        } else {
+            userRepo.findById(id).ifPresentOrElse(u -> u.setPassword(passwordEncoder.encode(updatePasswordDTO.password1())),
                     () -> { throw new NotFoundException("User", "id", id.toString()); }
             );
             userRepo.findById(id).ifPresent(userRepo::save);
-
-        log.info("User with id {} has updated a password", id);
-        return userRepo.findById(id).map(userMapper::mapUserToDTO);
+            return userRepo.findById(id).map(userMapper::mapUserToDTO);
+        }
     }
 
 }

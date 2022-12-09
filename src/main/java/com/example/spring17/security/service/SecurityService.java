@@ -4,12 +4,11 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.spring17.model.curiosity.user.dto.UserDTO;
+import com.example.spring17.model.user.dto.UserDTO;
 import com.example.spring17.service.user.UserServiceSelector;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.example.spring17.utils.Constants.*;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -43,7 +43,7 @@ public class SecurityService {
     public void refreshSession(HttpServletRequest request, HttpServletResponse response, String authorizationHeader) throws IOException {
         try {
             String refreshToken = authorizationHeader.substring("Bearer ".length());
-            com.auth0.jwt.algorithms.Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+            com.auth0.jwt.algorithms.Algorithm algorithm = Algorithm.HMAC256(ALGORITHM_SECRET.getBytes());
             JWTVerifier verifier = JWT.require(algorithm).build();
             DecodedJWT decodedJWT = verifier.verify(refreshToken);
             String username = decodedJWT.getSubject();
@@ -56,11 +56,11 @@ public class SecurityService {
                     .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000)) //10 minutes
                     .withIssuer(request.getRequestURL().toString())
                     //in the user details library is authorities is defined as Collection that extends GrantedAuthority
-                    .withClaim("roles", Stream.of(user.role()).collect(Collectors.toList()))
+                    .withClaim(JWT_CLAIM, Stream.of(user.role()).collect(Collectors.toList()))
                     .sign(algorithm);
             Map<String, String> tokens = new HashMap<>();
-            tokens.put("access_token", accessToken);
-            tokens.put("refresh_token", refreshToken);
+            tokens.put(ACCESS_TOKEN, accessToken);
+            tokens.put(REFRESH_TOKEN, refreshToken);
             response.setContentType(APPLICATION_JSON_VALUE);
             new ObjectMapper().writeValue(response.getOutputStream(), tokens);
         } catch (Exception exception){
@@ -69,7 +69,7 @@ public class SecurityService {
             response.setStatus(FORBIDDEN.value());
             //or more detailed response in a body:
             Map<String, String> error = new HashMap<>();
-            error.put("error_message", exception.getMessage());
+            error.put(TOKEN_ERROR_INDEX, exception.getMessage());
             response.setContentType(APPLICATION_JSON_VALUE);
             new ObjectMapper().writeValue(response.getOutputStream(), error);
         }

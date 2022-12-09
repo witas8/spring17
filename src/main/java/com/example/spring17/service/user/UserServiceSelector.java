@@ -2,11 +2,15 @@ package com.example.spring17.service.user;
 
 import com.example.spring17.exceptions.NotFoundException;
 import com.example.spring17.mapper.UserMapper;
-import com.example.spring17.model.curiosity.user.dto.UserDTO;
+import com.example.spring17.model.user.dto.UserDTO;
+import com.example.spring17.model.user.entity.User;
 import com.example.spring17.repository.UserRepo;
 import com.example.spring17.validators.UserValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +33,11 @@ public class UserServiceSelector {
         return userRepo.findAll().stream()
                 .map(userMapper::mapUserToDTO)
                 .collect(Collectors.toList());
+    }
+
+    public Page<UserDTO> getAllUsersWithPagination(int page, int limit){
+        //userRepo.findAll(PageRequest.of(offset, pageSize).withSort(Sort.by(field)));
+        return userRepo.findAll(PageRequest.of(page, limit).withSort(Sort.by("id"))).map(userMapper::mapUserToDTO); //.withSort(Sort.by("username"))); // //Page<User> users
     }
 
     public UserDTO getUser(String username) {

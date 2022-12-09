@@ -1,8 +1,10 @@
 package com.example.spring17.repository;
 
-import com.example.spring17.model.curiosity.user.entity.User;
+import com.example.spring17.model.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
+
 import java.util.Optional;
 
 public interface UserRepo extends JpaRepository<User, Long> {
@@ -14,5 +16,4 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN TRUE ELSE FALSE END FROM User u WHERE u.email = ?1")
     Boolean checkEmailIfExists(String email);
-
 }

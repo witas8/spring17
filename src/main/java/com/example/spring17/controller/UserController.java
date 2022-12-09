@@ -1,25 +1,29 @@
 package com.example.spring17.controller;
 
 
-import com.example.spring17.model.curiosity.user.dto.UpdatePasswordDTO;
-import com.example.spring17.model.curiosity.user.dto.UserDTO;
-import com.example.spring17.model.curiosity.user.dto.UserSaveDTO;
-import com.example.spring17.model.curiosity.user.entity.User;
+import com.example.spring17.model.user.dto.UpdatePasswordDTO;
+import com.example.spring17.model.user.dto.UserDTO;
+import com.example.spring17.model.user.dto.UserSaveDTO;
+import com.example.spring17.model.user.entity.User;
 import com.example.spring17.service.user.UserServiceDeleter;
 import com.example.spring17.service.user.UserServiceSaver;
 import com.example.spring17.service.user.UserServiceSelector;
 import com.example.spring17.service.user.UserServiceUpdater;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.spring17.utils.ConstantURL.USER_URL;
+
 @RestController
-@RequestMapping("/spring17/user")
+@RequestMapping(USER_URL)
 @AllArgsConstructor
 @Slf4j
 public class UserController {
@@ -32,6 +36,11 @@ public class UserController {
     @GetMapping("/all")
     public ResponseEntity<List<UserDTO>> getUsers(){
         return ResponseEntity.ok().body(userServiceSelector.getAllUsers());
+    }
+
+    @GetMapping("/pagination/{page}/{limit}")
+    private ResponseEntity<Page<UserDTO>> getUserWithPagination(@PathVariable("page") int page, @PathVariable("limit") int limit) {
+        return ResponseEntity.ok().body(userServiceSelector.getAllUsersWithPagination(page, limit));
     }
 
     @GetMapping("/id/{id}")
@@ -60,8 +69,8 @@ public class UserController {
     }
 
     //TODO: create login functionality with proper user updating
-    @PutMapping("/{userid}/password")
-    public ResponseEntity<Optional<UserDTO>> updatePassword(@RequestParam("userid") Long id,
+    @PutMapping("/password/{id}")
+    public ResponseEntity<Optional<UserDTO>> updatePassword(@PathVariable("id") Long id,
                                                          @RequestBody UpdatePasswordDTO updatePasswordDTO){
         return ResponseEntity.ok().body(userServiceUpdater.updatePassword(id, updatePasswordDTO));
     }

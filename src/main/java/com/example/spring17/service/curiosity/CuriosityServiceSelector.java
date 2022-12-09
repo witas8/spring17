@@ -4,10 +4,14 @@ import com.example.spring17.exceptions.NotFoundException;
 import com.example.spring17.mapper.CuriosityMapper;
 import com.example.spring17.model.curiosity.dto.CuriosityDTO;
 import com.example.spring17.model.curiosity.entity.Curiosity;
+import com.example.spring17.model.user.dto.UserDTO;
 import com.example.spring17.repository.CuriosityRepo;
 import com.example.spring17.service.user.UserServiceSelector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +32,11 @@ public class CuriosityServiceSelector {
 
     public List<CuriosityDTO> getAllCuriosities() {
         return curiosityRepo.findAll().stream().map(curiosityMapper::mapCuriosityToDTO).collect(Collectors.toList());
+    }
+
+    public Page<CuriosityDTO> getAllCuriositiesWithPagination(int page, int limit){
+        return curiosityRepo.findAll(PageRequest.of(page, limit).withSort(Sort.by("id")))
+                .map(curiosityMapper::mapCuriosityToDTO); //.withSort(Sort.by("username"))); // //Page<User> users
     }
 
     public Optional<Curiosity> getCuriosityById(Long id) {
@@ -61,23 +70,11 @@ public class CuriosityServiceSelector {
         return curiosityRepo.findNotAccepted();
     }
 
-    public List<Curiosity> getOrderedByLikes() {
-        return curiosityRepo.filerByLikes();
+    public List<Curiosity> getOrderedByLikes(String param) {
+        return curiosityRepo.filerByLikes(param);
     }
 
     public List<Curiosity> getUserDTOByQuestionContaining(String question) {
-        /*List<Curiosity> curiosityList = curiosityRepo.findByQuestionContaining(question);
-
-        if(curiosityList.size()>1){
-            log.info("Found {} curiosities with question {}!", curiosityList.size(), question);
-        } else {
-            log.info("Found just 1 curiosity with question {}!", question);
-        }
-
-        assert curiosityList.get(0).getUser().getId() != null;
-        return userServiceSelector
-                .getUserById(curiosityList.get(0).getUser().getId())
-                .orElseThrow(() -> new NotFoundException("Curiosity", "id", curiosityList.get(0).getUser().getId().toString()));*/
         return curiosityRepo.findByQuestionContaining(question)
                 .orElseThrow(() -> new NotFoundException("Curiosity", "question", question));
     }

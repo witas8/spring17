@@ -1,7 +1,7 @@
 package com.example.spring17.security.service;
 
 import com.example.spring17.exceptions.NotFoundException;
-import com.example.spring17.model.curiosity.user.entity.User;
+import com.example.spring17.model.user.entity.User;
 import com.example.spring17.repository.UserRepo;
 import com.example.spring17.service.user.UserServiceSelector;
 import lombok.RequiredArgsConstructor;

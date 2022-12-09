@@ -1,9 +1,9 @@
 package com.example.spring17.mapper;
 
-import com.example.spring17.model.curiosity.user.dto.UserDTO;
-import com.example.spring17.model.curiosity.user.dto.UserSaveDTO;
-import com.example.spring17.model.curiosity.user.entity.Roles;
-import com.example.spring17.model.curiosity.user.entity.User;
+import com.example.spring17.model.user.dto.UserDTO;
+import com.example.spring17.model.user.dto.UserSaveDTO;
+import com.example.spring17.model.user.entity.Roles;
+import com.example.spring17.model.user.entity.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -27,8 +27,6 @@ public class UserMapper {
     }
 
     public User mapSaveDtoToEntity(UserSaveDTO userSaveDTO, PasswordEncoder passwordEncoder){
-        //return new User(userDTO.id(), userDTO.firstName(), userDTO.lastName(),
-        //        userDTO.username(), userDTO.role(), userDTO.email(), userDTO.phone());
         return User.builder()
                 .firstName(userSaveDTO.firstName())
                 .lastName(userSaveDTO.lastName())
@@ -41,8 +39,6 @@ public class UserMapper {
     }
 
     public User mapDtoToEntity(UserDTO userDTO){
-        //return new User(userDTO.id(), userDTO.firstName(), userDTO.lastName(),
-        //        userDTO.username(), userDTO.role(), userDTO.email(), userDTO.phone());
         return User.builder()
                 .firstName(userDTO.firstName())
                 .lastName(userDTO.lastName())

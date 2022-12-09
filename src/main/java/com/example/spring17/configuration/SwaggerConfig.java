@@ -7,13 +7,15 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
+import static com.example.spring17.utils.ConstantURL.MAIN_HOST;
+
 @Configuration
 public class SwaggerConfig {
     @Bean
     public Docket get(){
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .paths(PathSelectors.ant("/spring17/**"))
+                .paths(PathSelectors.ant(MAIN_HOST + "/**"))
                 .apis(RequestHandlerSelectors.basePackage("com.example.spring17"))
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())

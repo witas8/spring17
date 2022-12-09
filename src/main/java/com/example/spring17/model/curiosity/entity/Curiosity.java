@@ -1,6 +1,6 @@
 package com.example.spring17.model.curiosity.entity;
 
-import com.example.spring17.model.curiosity.user.entity.User;
+import com.example.spring17.model.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 

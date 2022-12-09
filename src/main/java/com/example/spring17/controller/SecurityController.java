@@ -1,6 +1,7 @@
 package com.example.spring17.controller;
 
 import com.example.spring17.exceptions.BadRequestException;
+import com.example.spring17.exceptions.NotFoundException;
 import com.example.spring17.security.service.SecurityService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static com.example.spring17.utils.ConstantURL.MAIN_HOST;
 import static com.example.spring17.utils.ConstantURL.REFRESH_TOKEN_URL;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -31,7 +33,8 @@ public class SecurityController {
             securityService.refreshSession(request, response, authorizationHeader);
         } else{
             //TODO: handle this exception and add it to the controller advisor
-            throw new RuntimeException("Refresh token is missing");
+            //throw new RuntimeException("Refresh token is missing");
+            throw new NotFoundException("Token", "refresh token value", authorizationHeader);
         }
     }
 }

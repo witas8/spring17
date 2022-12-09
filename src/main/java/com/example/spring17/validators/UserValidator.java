@@ -2,8 +2,9 @@ package com.example.spring17.validators;
 
 import com.example.spring17.exceptions.BadRequestException;
 import com.example.spring17.exceptions.NotFoundException;
-import com.example.spring17.model.curiosity.user.dto.UserSaveDTO;
-import com.example.spring17.model.curiosity.user.entity.Roles;
+import com.example.spring17.model.user.dto.UserDTO;
+import com.example.spring17.model.user.dto.UserSaveDTO;
+import com.example.spring17.model.user.entity.Roles;
 import com.example.spring17.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
@@ -24,8 +25,18 @@ public class UserValidator {
         validateName(userSaveDTO.firstName());
         validateName(userSaveDTO.lastName());
         validateEmailExistence(userSaveDTO.email());
+        validateEmailFormat(userSaveDTO.email());
         validatePhoneNumberLength(userSaveDTO.phone());
         validateRole(userSaveDTO.role());
+    }
+
+    public void validateBeforeUpdating(UserDTO userDTO){
+        validateUserExistence(userDTO.username());
+        validateName(userDTO.firstName());
+        validateName(userDTO.lastName());
+        validateEmailExistence(userDTO.email());
+        validatePhoneNumberLength(userDTO.phone());
+        validateRole(userDTO.role());
     }
 
     public void validateIfExists(Long id){
@@ -42,6 +53,11 @@ public class UserValidator {
     private void validateEmailExistence(String email){
         Boolean doesEmailExist = userRepo.checkEmailIfExists(email);
         if (doesEmailExist) throw new BadRequestException("Email", email, true);
+    }
+
+    private void validateEmailFormat(String email){
+        if (!email.contains("@") || !email.contains("."))
+            throw new BadRequestException("Email", email, true);
     }
 
     void validatePhoneNumberLength(String phoneNumber){

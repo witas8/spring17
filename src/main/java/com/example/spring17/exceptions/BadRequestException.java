@@ -10,6 +10,7 @@ import static com.example.spring17.utils.Constants.BAD_REQUEST_TAKEN;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class BadRequestException extends RuntimeException {
     public BadRequestException(String param, String value, boolean isTaken) {
-        super(param + StringUtils.SPACE + value + (isTaken ? BAD_REQUEST_TAKEN : BAD_REQUEST_FORMAT));
+        super(param + StringUtils.SPACE + value
+                + (isTaken ? BAD_REQUEST_TAKEN : BAD_REQUEST_FORMAT));
     }
 }

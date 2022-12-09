@@ -1,4 +1,4 @@
-package com.example.spring17.model.curiosity.user.entity;
+package com.example.spring17.model.user.entity;
 
 import lombok.*;
 import org.springframework.lang.Nullable;

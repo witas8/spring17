@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.example.spring17.utils.Constants.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -44,9 +45,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-
         log.info("Username is: {} ", username);
-        log.info("Password is: {}", password);
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         return authenticationManager.authenticate(authenticationToken);
@@ -58,14 +57,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         //to generate, sign and send a token by using external library jwt auth0
         User userDetails = (User) authResult.getPrincipal();
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        Algorithm algorithm = Algorithm.HMAC256(ALGORITHM_SECRET.getBytes());
 
         //generate 10 minutes token
         String accessToken = JWT.create()
                 .withSubject(userDetails.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000)) //10 minutes
                 .withIssuer(request.getRequestURL().toString())
-                .withClaim("roles", userDetails.getAuthorities().stream()
+                .withClaim(JWT_CLAIM, userDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
 
@@ -78,8 +77,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         //create the header for successfully logged user
         Map<String, String> tokens = new HashMap<>();
-        tokens.put("access_token", accessToken);
-        tokens.put("refresh_token", refreshToken);
+        tokens.put(ACCESS_TOKEN, accessToken);
+        tokens.put(REFRESH_TOKEN, refreshToken);
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }

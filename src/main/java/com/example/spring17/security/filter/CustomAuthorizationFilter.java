@@ -21,8 +21,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.spring17.utils.ConstantURL.LOGIN_URL;
-import static com.example.spring17.utils.ConstantURL.REFRESH_TOKEN_URL;
+import static com.example.spring17.utils.ConstantURL.*;
+import static com.example.spring17.utils.Constants.*;
 import static java.util.Arrays.stream;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -61,7 +61,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                   response.setHeader("error", exception.getMessage());
                   response.setStatus(FORBIDDEN.value());
                   Map<String, String> error = new HashMap<>();
-                  error.put("error_message", exception.getMessage());
+                  error.put(TOKEN_ERROR_INDEX, exception.getMessage());
                   response.setContentType(APPLICATION_JSON_VALUE);
                   new ObjectMapper().writeValue(response.getOutputStream(), error);
               }
@@ -76,7 +76,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         //get everything what is after 'Bearer and space'
         String token = header.substring(BEARER_TOKEN_BEGINNING.length());
         //use the algorithm from CustomAuthenticationFilter
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        Algorithm algorithm = Algorithm.HMAC256(ALGORITHM_SECRET.getBytes());
         //verify token by using auth0
         JWTVerifier verifier = JWT.require(algorithm).build();
         return verifier.verify(token);
@@ -84,7 +84,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     private UsernamePasswordAuthenticationToken getAuthenticationToken(DecodedJWT decodedJWT){
         String username = decodedJWT.getSubject();
-        String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
+        String[] roles = decodedJWT.getClaim(JWT_CLAIM).asArray(String.class);
         //Spring Security is expecting a GrantedAuthority, so make a conversion:
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));

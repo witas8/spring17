@@ -1,4 +1,4 @@
-package com.example.spring17.model.curiosity.user.dto;
+package com.example.spring17.model.user.dto;
 
 import lombok.Builder;
 import org.springframework.lang.Nullable;

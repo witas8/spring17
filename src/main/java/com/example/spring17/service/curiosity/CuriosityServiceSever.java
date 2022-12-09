@@ -5,7 +5,7 @@ import com.example.spring17.exceptions.NotFoundException;
 import com.example.spring17.mapper.CuriosityMapper;
 import com.example.spring17.model.curiosity.dto.CuriosityDTO;
 import com.example.spring17.model.curiosity.entity.Curiosity;
-import com.example.spring17.model.curiosity.user.entity.User;
+import com.example.spring17.model.user.entity.User;
 import com.example.spring17.repository.CuriosityRepo;
 import com.example.spring17.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class CuriosityServiceSever {
     private final UserRepo userRepo;
     private final CuriosityMapper curiosityMapper;
 
-    public Curiosity saveCuriosity(CuriosityDTO curiosityDTO) {
+    public CuriosityDTO saveCuriosity(CuriosityDTO curiosityDTO) {
         Boolean doesQuestionExist = curiosityRepo.checkQuestionUniqueness(curiosityDTO.question());
         if (doesQuestionExist) {
             throw new BadRequestException("Question ", curiosityDTO.question(), true);
@@ -37,7 +37,10 @@ public class CuriosityServiceSever {
         User user = userRepo.findById( curiosityDTO.userDTO().id())
                 .orElseThrow(() -> new NotFoundException("User", "id", curiosityDTO.userDTO().id().toString()));
 
-        return curiosityRepo.save(curiosityMapper.mapDtoToEntity(curiosityDTO, user));
+        Curiosity curiosity= curiosityRepo.save(curiosityMapper.mapDtoToEntity(curiosityDTO, user));
+        log.info("curiosity ID: " + curiosity.getId());
+
+        return curiosityMapper.mapIdToDTO(curiosity.getId(), curiosityDTO);
 
     }
 
