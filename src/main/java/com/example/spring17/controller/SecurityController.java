@@ -32,8 +32,6 @@ public class SecurityController {
         if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             securityService.refreshSession(request, response, authorizationHeader);
         } else{
-            //TODO: handle this exception and add it to the controller advisor
-            //throw new RuntimeException("Refresh token is missing");
             throw new NotFoundException("Token", "refresh token value", authorizationHeader);
         }
     }

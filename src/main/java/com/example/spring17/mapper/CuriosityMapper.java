@@ -1,9 +1,9 @@
 package com.example.spring17.mapper;
 
 import com.example.spring17.model.curiosity.dto.CuriosityDTO;
+import com.example.spring17.model.curiosity.dto.CuriositySaveDTO;
 import com.example.spring17.model.curiosity.entity.Categories;
 import com.example.spring17.model.curiosity.entity.Curiosity;
-import com.example.spring17.model.user.dto.UserDTO;
 import com.example.spring17.model.user.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,14 +14,14 @@ public class CuriosityMapper {
 
     private final UserMapper userMapper;
 
-    public Curiosity mapDtoToEntity(CuriosityDTO curiosityDTO, User user){
+    public Curiosity mapDtoToEntity(CuriositySaveDTO curiositySaveDTO, User user){
         return Curiosity.builder()
                 .user(user)
-                .category(Enum.valueOf(Categories.class, curiosityDTO.category()))
-                .question(curiosityDTO.question())
-                .answer(curiosityDTO.answer())
-                .accepted(curiosityDTO.accepted())
-                .likes(curiosityDTO.likes())
+                .category(Enum.valueOf(Categories.class, curiositySaveDTO.category()))
+                .question(curiositySaveDTO.question())
+                .answer(curiositySaveDTO.answer())
+                .accepted(curiositySaveDTO.accepted())
+                .likes(curiositySaveDTO.likes())
                 .build();
     }
 
@@ -32,20 +32,32 @@ public class CuriosityMapper {
                 curiosity.getCategory().toString(),
                 curiosity.getQuestion(),
                 curiosity.getAnswer(),
-                curiosity.isAccepted(),
-                curiosity.getLikes()
+                curiosity.getAccepted(),
+                curiosity.getLikes(),
+                curiosity.getCreateDate()
                 );
     }
 
-    public CuriosityDTO mapIdToDTO(Long id, CuriosityDTO curiosityDTO){
-        return new CuriosityDTO(
-                id,
-                curiosityDTO.userDTO(),
-                curiosityDTO.category(),
-                curiosityDTO.question(),
-                curiosityDTO.answer(),
-                curiosityDTO.accepted(),
-                curiosityDTO.likes()
-        );
+    public CuriosityDTO mapIdToDTO(Curiosity curiosity){
+        return CuriosityDTO.builder()
+                .id(curiosity.getId())
+                .userDTO(userMapper.mapUserToDTO(curiosity.getUser()))
+                .category(curiosity.getCategory().toString())
+                .question(curiosity.getQuestion())
+                .answer(curiosity.getAnswer())
+                .accepted(curiosity.getAccepted())
+                .likes(curiosity.getLikes())
+                .date(curiosity.getCreateDate())
+                .build();
+        /*return new CuriosityDTO(
+                curiosity.getId(),
+                curiosity.getUser(),
+                curiosity.getCategory(),
+                curiosity.getQuestion(),
+                curiosity.getAnswer(),
+                curiosity.isAccepted(),
+                curiosity.getLikes(),
+                curiosity.getDate()
+        );*/
     }
 }

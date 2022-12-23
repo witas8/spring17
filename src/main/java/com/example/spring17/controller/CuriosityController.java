@@ -1,8 +1,9 @@
 package com.example.spring17.controller;
 
 import com.example.spring17.model.curiosity.dto.CuriosityDTO;
+import com.example.spring17.model.curiosity.dto.CuriosityFilterDTO;
+import com.example.spring17.model.curiosity.dto.CuriositySaveDTO;
 import com.example.spring17.model.curiosity.entity.Curiosity;
-import com.example.spring17.model.user.dto.UserDTO;
 import com.example.spring17.service.curiosity.CuriosityServiceDeleter;
 import com.example.spring17.service.curiosity.CuriosityServiceSelector;
 import com.example.spring17.service.curiosity.CuriosityServiceSever;
@@ -34,9 +35,19 @@ public class CuriosityController {
         return ResponseEntity.ok().body(curiosityServiceSelector.getAllCuriosities());
     }
 
-    @GetMapping("/pagination/{page}/{limit}")
+   /* @GetMapping("/pagination/{page}/{limit}")
     private ResponseEntity<Page<CuriosityDTO>> getUserWithPagination(@PathVariable("page") int page, @PathVariable("limit") int limit) {
         return ResponseEntity.ok().body(curiosityServiceSelector.getAllCuriositiesWithPagination(page, limit));
+    }*/
+
+    @GetMapping("/pagination/{page}/{limit}/{param}/{isAsc}")
+    private ResponseEntity<Page<CuriosityDTO>> getCuriosityWithPagination(@PathVariable("page") int page,
+                                                                          @PathVariable("limit") int limit,
+                                                                          @PathVariable("param") String sortParam,
+                                                                          @PathVariable("isAsc") boolean isAscending,
+                                                                          @RequestBody CuriosityFilterDTO curiosityFilterDTO){
+        return ResponseEntity.ok().body(curiosityServiceSelector
+                .getAllWithPagination(page, limit, sortParam, isAscending, curiosityFilterDTO));
     }
 
     @GetMapping("/question/{question}")
@@ -56,8 +67,8 @@ public class CuriosityController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<CuriosityDTO> saveCuriosity(@RequestBody CuriosityDTO curiosityDTO){
-        return ResponseEntity.status(HttpStatus.CREATED).body(curiosityServiceSever.saveCuriosity(curiosityDTO));
+    public ResponseEntity<CuriosityDTO> saveCuriosity(@RequestBody CuriositySaveDTO curiositySaveDTO){ //CuriosityDTO curiosityDTO
+        return ResponseEntity.status(HttpStatus.CREATED).body(curiosityServiceSever.saveCuriosity(curiositySaveDTO));
     }
 
 }

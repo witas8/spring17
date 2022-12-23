@@ -12,9 +12,18 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
 
     public User mapUpdatedDtoToEntity(UserDTO userDTO, User user){
-        //return new User(user.getId(), userDTO.firstName(), userDTO.lastName(),
-         //       userDTO.username(), user.getPassword(), userDTO.role(), userDTO.email(), userDTO.phone());
-        return User.builder()
+        return user.toBuilder()
+                //.id(user.getId())
+                .firstName(userDTO.firstName())
+                .lastName(userDTO.lastName())
+                .username(userDTO.username())
+                //.password(user.getPassword())
+                .role(Enum.valueOf(Roles.class, userDTO.role()))
+                .email(userDTO.email())
+                .phone(userDTO.phone())
+                .build();
+
+/*        return User.builder()
                 .id(user.getId())
                 .firstName(userDTO.firstName())
                 .lastName(userDTO.lastName())
@@ -23,7 +32,7 @@ public class UserMapper {
                 .role(Enum.valueOf(Roles.class, userDTO.role()))
                 .email(userDTO.email())
                 .phone(userDTO.phone())
-                .build();
+                .build();*/
     }
 
     public User mapSaveDtoToEntity(UserSaveDTO userSaveDTO, PasswordEncoder passwordEncoder){

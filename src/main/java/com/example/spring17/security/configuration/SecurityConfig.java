@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -20,10 +22,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.sql.DataSource;
 
 import static com.example.spring17.utils.ConstantURL.*;
 import static org.springframework.http.HttpMethod.GET;
@@ -38,8 +45,8 @@ public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
 
-//    @Value("${server.servlet.session.cookie.name:JSESSSIONID}")
-//    private String cookieName;
+    @Value("${server.servlet.session.cookie.name:JSESSSIONID}") //my own cookie name
+    private String cookieName;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -57,22 +64,27 @@ public class SecurityConfig {
         customAuthenticationFilter.setFilterProcessesUrl(LOGIN_URL);
 
         return http
-                .csrf().disable()
+                .csrf().disable() //comment to make cookies working
+                //.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
                 .cors().disable()
+                //.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                //.and()
+                //.formLogin(v -> v.defaultSuccessUrl(AFTER_SUCCESSFUL_LOGIN_URL, true))
+                .httpBasic()
+                .and()
+                .formLogin(v -> v.defaultSuccessUrl(AFTER_SUCCESSFUL_LOGIN_URL, true))
+                .logout()
+                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .deleteCookies(cookieName)
+                .permitAll()
+                .and()
                 .authorizeHttpRequests()
                 .antMatchers(LOGIN_URL+"/**", REFRESH_TOKEN_URL+"/**").permitAll() //REFRESH_TOKEN_URL
-                .antMatchers(USER_URL+"/all").permitAll()
+                .antMatchers(USER_URL+"/all/**", USER_URL+"/pagination/**").permitAll()
                 .antMatchers(GET, CURIOSITY_URL+"/**").permitAll()
-                //swagger
-                .antMatchers("/v2/api-docs").permitAll()
-                .antMatchers("/configuration/ui").permitAll()
-                .antMatchers("/swagger-resources/**").permitAll()
-                .antMatchers("/configuration/security").permitAll()
-                .antMatchers("/swagger-ui.html").permitAll()
-                .antMatchers("/swagger-ui/*").permitAll()
-                .antMatchers("/webjars/**").permitAll()
-                .antMatchers("/v2/**").permitAll()
-                //roles
+                .antMatchers(AUTH_SWAGGER_WHITELIST).permitAll()
                 .antMatchers(USER_URL+"/**").hasAnyAuthority(Roles.ADMIN.toString())
                 .anyRequest().authenticated()
                 .and()
@@ -81,9 +93,6 @@ public class SecurityConfig {
                 .and()
                 .addFilter(customAuthenticationFilter)
                 .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
-                //.formLogin(v -> v.defaultSuccessUrl("/spring17/curiosity/all", true)) //any http
-                //.logout().logoutSuccessUrl("/").clearAuthentication(true).deleteCookies(cookieName)
-                //.and()
                 .build();
     }
 

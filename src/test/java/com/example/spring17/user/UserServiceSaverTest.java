@@ -2,7 +2,7 @@ package com.example.spring17.user;
 
 import com.example.spring17.exceptions.BadRequestException;
 import com.example.spring17.mapper.UserMapper;
-import com.example.spring17.model.user.dto.UserDTO;
+import com.example.spring17.model.user.dto.UserSaveDTO;
 import com.example.spring17.model.user.entity.Roles;
 import com.example.spring17.model.user.entity.User;
 import com.example.spring17.repository.UserRepo;
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 import static com.example.spring17.utils.Constants.BAD_REQUEST_TAKEN;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.*;
 public class UserServiceSaverTest {
 
     @InjectMocks
-    private UserServiceSaver userServiceSaverTest;
+    private UserServiceSaver userServiceSaver;
 
     @Mock
     private UserRepo userRepo;
@@ -37,6 +38,8 @@ public class UserServiceSaverTest {
     @Mock
     private UserMapper userMapper;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @Test
     @DisplayName("Should save user")
@@ -45,13 +48,12 @@ public class UserServiceSaverTest {
         User user = new User(101L, "testFirstName", "testLastName",
                 "testUsername", "testPassword", Roles.ADMIN,
                 "test@gmail.com", "500600700");
+        UserSaveDTO userSaveDTO = new UserSaveDTO("mik", "testLastName",
+                "mikwit8", "pass", Roles.ADMIN.toString(), "test8@gmail.com", "500600700");
 
         //when
-        when(userMapper.mapUserToDTO(any(User.class))).thenReturn(
-                new UserDTO(101L, "testFirstName", "testUsername",
-                "testUsername", Roles.ADMIN.toString(), "test@gmail.com", "500600700"));
-        when(userMapper.mapDtoToEntity(any(UserDTO.class))).thenReturn(user);
-        userServiceSaverTest.saveUser(userMapper.mapUserToDTO(user));
+        when(userMapper.mapSaveDtoToEntity(any(UserSaveDTO.class), eq(passwordEncoder))).thenReturn(user);
+        userServiceSaver.saveUser(userSaveDTO); //userMapper.mapUserToDTO(user)
 
         //then
         ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
@@ -65,16 +67,17 @@ public class UserServiceSaverTest {
     @DisplayName("Should throw user when username is taken")
     void shouldThrowWhenUsernameIsTaken(){
         //given
-        UserDTO userDTO = new UserDTO(101L,"mik", "testLastName",
-                "mikwit8", Roles.ADMIN.toString(), "test8@gmail.com", "500600700");
+        UserSaveDTO userSaveDTO = new UserSaveDTO("mik", "testLastName",
+                "mikwit8", "pass", Roles.ADMIN.toString(), "test8@gmail.com", "500600700");
 
         //when
-        doThrow(new BadRequestException("Username", userDTO.username(), true)).when(userValidator).validateUserExistence(userDTO.username());
+        doThrow(new BadRequestException("Username", userSaveDTO.username(), true))
+                .when(userValidator).validateBeforeSaving(userSaveDTO);
 
         //then
-       assertThatThrownBy(() -> userServiceSaverTest.saveUser(userDTO))
+       assertThatThrownBy(() -> userServiceSaver.saveUser(userSaveDTO))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessage("Username " + userDTO.username() + BAD_REQUEST_TAKEN);
+                .hasMessage("Username " + userSaveDTO.username() + BAD_REQUEST_TAKEN);
         verify(userRepo, never()).save(any());
 
     }

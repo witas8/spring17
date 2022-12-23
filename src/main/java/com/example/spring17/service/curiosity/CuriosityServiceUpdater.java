@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -31,11 +32,11 @@ public class CuriosityServiceUpdater {
             if(updateCuriosity.getAnswer() != null && !CuriosityToBeUpdated.getAnswer().equals(updateCuriosity.getAnswer()))
                 CuriosityToBeUpdated.setAnswer(updateCuriosity.getAnswer());
 
-            if(updateCuriosity.getLikes() != 0 && CuriosityToBeUpdated.getLikes() != updateCuriosity.getLikes())
+            if(updateCuriosity.getLikes() != null && !Objects.equals(CuriosityToBeUpdated.getLikes(), updateCuriosity.getLikes()))
                 CuriosityToBeUpdated.setLikes(updateCuriosity.getLikes());
 
-            if(CuriosityToBeUpdated.isAccepted() != updateCuriosity.isAccepted())
-                CuriosityToBeUpdated.setAccepted(updateCuriosity.isAccepted());
+            if(CuriosityToBeUpdated.getAccepted() != null && CuriosityToBeUpdated.getAccepted() != updateCuriosity.getAccepted())
+                CuriosityToBeUpdated.setAccepted(updateCuriosity.getAccepted());
 
             curiosityRepo.findById(id).ifPresent(curiosityRepo::save);
         }

@@ -4,6 +4,7 @@ import com.example.spring17.exceptions.BadRequestException;
 import com.example.spring17.exceptions.NotFoundException;
 import com.example.spring17.mapper.CuriosityMapper;
 import com.example.spring17.model.curiosity.dto.CuriosityDTO;
+import com.example.spring17.model.curiosity.dto.CuriositySaveDTO;
 import com.example.spring17.model.curiosity.entity.Curiosity;
 import com.example.spring17.model.user.entity.User;
 import com.example.spring17.repository.CuriosityRepo;
@@ -24,23 +25,23 @@ public class CuriosityServiceSever {
     private final UserRepo userRepo;
     private final CuriosityMapper curiosityMapper;
 
-    public CuriosityDTO saveCuriosity(CuriosityDTO curiosityDTO) {
-        Boolean doesQuestionExist = curiosityRepo.checkQuestionUniqueness(curiosityDTO.question());
+    public CuriosityDTO saveCuriosity(CuriositySaveDTO curiositySaveDTO) {
+        Boolean doesQuestionExist = curiosityRepo.checkQuestionUniqueness(curiositySaveDTO.question());
         if (doesQuestionExist) {
-            throw new BadRequestException("Question ", curiosityDTO.question(), true);
+            throw new BadRequestException("Question ", curiositySaveDTO.question(), true);
         }
 
-        log.info("Saving new Curiosity from category {} and id {} to the database",
-                curiosityDTO.category(), curiosityDTO.id());
+        log.info("Saving new Curiosity from category {} and question {} to the database",
+                curiositySaveDTO.category(), curiositySaveDTO.question());
 
-        assert curiosityDTO.userDTO().id() != null;
-        User user = userRepo.findById( curiosityDTO.userDTO().id())
-                .orElseThrow(() -> new NotFoundException("User", "id", curiosityDTO.userDTO().id().toString()));
+        assert curiositySaveDTO.userDTO().id() != null;
+        User user = userRepo.findById( curiositySaveDTO.userDTO().id())
+                .orElseThrow(() -> new NotFoundException("User", "id", curiositySaveDTO.userDTO().id().toString()));
 
-        Curiosity curiosity= curiosityRepo.save(curiosityMapper.mapDtoToEntity(curiosityDTO, user));
+        Curiosity curiosity= curiosityRepo.save(curiosityMapper.mapDtoToEntity(curiositySaveDTO, user));
         log.info("curiosity ID: " + curiosity.getId());
 
-        return curiosityMapper.mapIdToDTO(curiosity.getId(), curiosityDTO);
+        return curiosityMapper.mapIdToDTO(curiosity);
 
     }
 

@@ -1,6 +1,7 @@
 package com.example.spring17.repository;
 
 import com.example.spring17.model.curiosity.entity.Curiosity;
+import com.example.spring17.model.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import java.util.List;
@@ -24,5 +25,11 @@ public interface CuriosityRepo extends JpaRepository<Curiosity, Long> {
     //JOIN to get another property from external relational entity then only ID
     @Query("SELECT c FROM Curiosity c JOIN c.user WHERE c.question like %:partOfQuestion%")
     Optional<List<Curiosity>> findByQuestionContaining(String partOfQuestion); // limit Pageable page
+
+    Optional<Curiosity> findByQuestion(String question);
+
+    Optional<Curiosity> findByAnswer(String answer);
+
+
 
 }

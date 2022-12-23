@@ -5,11 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 @Entity
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Table(name = "curiosity")
@@ -29,7 +31,13 @@ public class Curiosity {
     @Column(unique=true)
     private String question;
     private String answer;
-    private boolean accepted;
-    private int likes;
+    private Boolean accepted;
+    private Integer likes;
+    private OffsetDateTime createDate;
 
+    @PrePersist
+    void prePersist() {
+        this.createDate = OffsetDateTime.now();
+    }
 }
+

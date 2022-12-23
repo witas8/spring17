@@ -9,6 +9,8 @@ import com.example.spring17.service.user.UserServiceDeleter;
 import com.example.spring17.service.user.UserServiceSaver;
 import com.example.spring17.service.user.UserServiceSelector;
 import com.example.spring17.service.user.UserServiceUpdater;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,12 +39,16 @@ public class UserController {
         return ResponseEntity.ok().body(userServiceSelector.getAllUsers());
     }
 
-    @GetMapping("/pagination/{page}/{limit}")
-    private ResponseEntity<Page<UserDTO>> getUserWithPagination(@PathVariable("page") int page, @PathVariable("limit") int limit) {
-        return ResponseEntity.ok().body(userServiceSelector.getAllUsersWithPagination(page, limit));
+    @GetMapping("/pagination/{page}/{limit}/{param}/{isAsc}")
+    private ResponseEntity<Page<UserDTO>> getUserWithPagination(@PathVariable("page") int page,
+                                                                @PathVariable("limit") int limit,
+                                                                @PathVariable("param") String param,
+                                                                @PathVariable("isAsc") Boolean isAscending) {
+        return ResponseEntity.ok().body(userServiceSelector.getAllUsersWithPagination(page, limit, param, isAscending));
     }
 
     @GetMapping("/id/{id}")
+    @ApiOperation(value = "", authorizations = { @Authorization(value="JWT") })
     public ResponseEntity<UserDTO> getUsersById(@PathVariable("id") Long id){
         return ResponseEntity.ok().body(userServiceSelector.getUserById(id));
     }
@@ -63,12 +68,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userServiceSaver.saveUser(userSaveDTO));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/id/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable("id") Long id, @RequestBody UserDTO userDTO){
         return ResponseEntity.ok().body(userServiceUpdater.updateUser(id, userDTO));
     }
 
-    //TODO: create login functionality with proper user updating
     @PutMapping("/password/{id}")
     public ResponseEntity<Optional<UserDTO>> updatePassword(@PathVariable("id") Long id,
                                                          @RequestBody UpdatePasswordDTO updatePasswordDTO){

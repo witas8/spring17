@@ -5,6 +5,7 @@ import com.example.spring17.exceptions.NotFoundException;
 import com.example.spring17.mapper.UserMapper;
 import com.example.spring17.model.user.dto.UpdatePasswordDTO;
 import com.example.spring17.model.user.dto.UserDTO;
+import com.example.spring17.model.user.entity.User;
 import com.example.spring17.repository.UserRepo;
 import com.example.spring17.validators.UserValidator;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +31,10 @@ public class UserServiceUpdater {
     private final PasswordEncoder passwordEncoder;
 
     public UserDTO updateUser(Long id, UserDTO updatedUserDTO) {
-        userValidator.validateBeforeUpdating(updatedUserDTO);
-        return userRepo.findById(id)
-                .map(user -> userMapper.mapUpdatedDtoToEntity(updatedUserDTO, user))
+        Optional<User> user = userRepo.findById(id);
+        userValidator.validateBeforeUpdating(updatedUserDTO, user);
+        return user
+                .map(u -> userMapper.mapUpdatedDtoToEntity(updatedUserDTO, u))
                 .map(userRepo::save)
                 .map(userMapper::mapUserToDTO)
                 .orElseThrow(() -> new NotFoundException("User", "id", id.toString()));

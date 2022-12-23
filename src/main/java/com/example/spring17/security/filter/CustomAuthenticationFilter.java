@@ -2,6 +2,7 @@ package com.example.spring17.security.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.example.spring17.security.service.UserDetailsServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +63,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         //generate 10 minutes token
         String accessToken = JWT.create()
                 .withSubject(userDetails.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000)) //10 minutes
+                .withExpiresAt(new Date(System.currentTimeMillis() + 20 * 60 * 1000)) //20 minutes
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim(JWT_CLAIM, userDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority).collect(Collectors.toList()))

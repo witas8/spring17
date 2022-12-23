@@ -15,6 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.OffsetDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,7 +46,7 @@ public class CuriosityServiceSelectorTest {
                 "mikwit8", "testPassword", Roles.ADMIN,
                 "test88@gmail.com", "500600700");
         Curiosity curiosity = new Curiosity(103L, user, Categories.BIOLOGY,
-                "que", "ans", false, 10);
+                "que", "ans", false, 10, OffsetDateTime.now());
 
         //when
         given(curiosityRepo.checkQuestionUniqueness(curiosity.getQuestion())).willReturn(false);

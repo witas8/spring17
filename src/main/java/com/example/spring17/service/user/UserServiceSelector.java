@@ -8,6 +8,7 @@ import com.example.spring17.repository.UserRepo;
 import com.example.spring17.validators.UserValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -35,9 +36,26 @@ public class UserServiceSelector {
                 .collect(Collectors.toList());
     }
 
-    public Page<UserDTO> getAllUsersWithPagination(int page, int limit){
-        //userRepo.findAll(PageRequest.of(offset, pageSize).withSort(Sort.by(field)));
-        return userRepo.findAll(PageRequest.of(page, limit).withSort(Sort.by("id"))).map(userMapper::mapUserToDTO); //.withSort(Sort.by("username"))); // //Page<User> users
+    public Page<UserDTO> getAllUsersWithPagination(int page, int limit, String param, boolean isAscending){
+        User user = new User();
+        user.setLastName("wit");
+        Example<User> userExample = Example.of(user);
+
+        System.out.println(userRepo.findAll(
+                userExample,
+                        PageRequest.of(page, limit).withSort(Sort.by(
+                                isAscending ? Sort.Direction.ASC : Sort.Direction.DESC,
+                                param)
+                        ))
+                .map(userMapper::mapUserToDTO));
+
+        return userRepo.findAll(
+                    userExample,
+                    PageRequest.of(page, limit).withSort(Sort.by(
+                            isAscending ? Sort.Direction.ASC : Sort.Direction.DESC,
+                            param)
+                    ))
+                .map(userMapper::mapUserToDTO);
     }
 
     public UserDTO getUser(String username) {
