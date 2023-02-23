@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.spring17.utils.ConstantURL.CURIOSITY_URL;
 
@@ -35,12 +36,34 @@ public class CuriosityController {
         return ResponseEntity.ok().body(curiosityServiceSelector.getAllCuriosities());
     }
 
-   /* @GetMapping("/pagination/{page}/{limit}")
-    private ResponseEntity<Page<CuriosityDTO>> getUserWithPagination(@PathVariable("page") int page, @PathVariable("limit") int limit) {
-        return ResponseEntity.ok().body(curiosityServiceSelector.getAllCuriositiesWithPagination(page, limit));
-    }*/
+    @GetMapping("/id/{id}")
+    private ResponseEntity<CuriosityDTO> getCuriosity(@PathVariable("id") Long id){
+        return ResponseEntity.ok().body(curiosityServiceSelector.getCuriosityById(id));
+    }
 
-    @GetMapping("/pagination/{page}/{limit}/{param}/{isAsc}")
+    @GetMapping("/question/{question}")
+    public ResponseEntity<List<CuriosityDTO>> getQuestionContaining(
+            @PathVariable("question") String question){
+        return ResponseEntity.ok().body(curiosityServiceSelector.getUserDTOByQuestionContaining(question));
+    }
+
+    @GetMapping("/question/whole/{question}")
+    public ResponseEntity<CuriosityDTO> getQuestion(
+            @PathVariable("question") String question){
+        return ResponseEntity.ok().body(curiosityServiceSelector.getQuestion(question));
+    }
+
+    @GetMapping("/accepted")
+    public ResponseEntity<List<CuriosityDTO>> getAllAccepted(){
+        return ResponseEntity.ok().body(curiosityServiceSelector.getAllAccepted());
+    }
+
+    @GetMapping("/notaccepted")
+    public ResponseEntity<List<CuriosityDTO>> getAllNotAccepted(){
+        return ResponseEntity.ok().body(curiosityServiceSelector.getAllNotAccepted());
+    }
+
+    @PostMapping("/pagination/{page}/{limit}/{param}/{isAsc}")
     private ResponseEntity<Page<CuriosityDTO>> getCuriosityWithPagination(@PathVariable("page") int page,
                                                                           @PathVariable("limit") int limit,
                                                                           @PathVariable("param") String sortParam,
@@ -50,25 +73,16 @@ public class CuriosityController {
                 .getAllWithPagination(page, limit, sortParam, isAscending, curiosityFilterDTO));
     }
 
-    @GetMapping("/question/{question}")
-    public ResponseEntity<List<Curiosity>> getQuestionContaining(
-            @PathVariable("question") String question){
-        return ResponseEntity.ok().body(curiosityServiceSelector.getUserDTOByQuestionContaining(question));
-    }
-
-    @GetMapping("/accepted")
-    public ResponseEntity<List<Curiosity>> getAllAccepted(){
-        return ResponseEntity.ok().body(curiosityServiceSelector.getAllAccepted());
-    }
-
-    @GetMapping("/notaccepted")
-    public ResponseEntity<List<Curiosity>> getAllNotAccepted(){
-        return ResponseEntity.ok().body(curiosityServiceSelector.getAllNotAccepted());
+    @PostMapping("/favourite/{ids}/{from}/{end}")
+    //ResponseEntity<Page<CuriosityDTO>>
+    public ResponseEntity<List<CuriosityDTO>> getLikedCuriosities(@PathVariable("ids") String likedCuriosityIds,
+                                                                  @PathVariable("from") int from,
+                                                                  @PathVariable("end") int end){
+        return ResponseEntity.ok().body(curiosityServiceSelector.getLikedCuriosities(likedCuriosityIds, from, end));
     }
 
     @PostMapping("/save")
     public ResponseEntity<CuriosityDTO> saveCuriosity(@RequestBody CuriositySaveDTO curiositySaveDTO){ //CuriosityDTO curiosityDTO
         return ResponseEntity.status(HttpStatus.CREATED).body(curiosityServiceSever.saveCuriosity(curiositySaveDTO));
     }
-
 }

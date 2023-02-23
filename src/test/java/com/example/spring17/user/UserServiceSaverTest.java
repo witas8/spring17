@@ -47,9 +47,9 @@ public class UserServiceSaverTest {
         //given
         User user = new User(101L, "testFirstName", "testLastName",
                 "testUsername", "testPassword", Roles.ADMIN,
-                "test@gmail.com", "500600700");
-        UserSaveDTO userSaveDTO = new UserSaveDTO("mik", "testLastName",
-                "mikwit8", "pass", Roles.ADMIN.toString(), "test8@gmail.com", "500600700");
+                "test@gmail.com", "500600700", "");
+        UserSaveDTO userSaveDTO = new UserSaveDTO("mik", "testLastName", "mikwit8",
+                "pass", Roles.ADMIN.toString(), "test8@gmail.com", "500600700", "");
 
         //when
         when(userMapper.mapSaveDtoToEntity(any(UserSaveDTO.class), eq(passwordEncoder))).thenReturn(user);
@@ -67,8 +67,8 @@ public class UserServiceSaverTest {
     @DisplayName("Should throw user when username is taken")
     void shouldThrowWhenUsernameIsTaken(){
         //given
-        UserSaveDTO userSaveDTO = new UserSaveDTO("mik", "testLastName",
-                "mikwit8", "pass", Roles.ADMIN.toString(), "test8@gmail.com", "500600700");
+        UserSaveDTO userSaveDTO = new UserSaveDTO("mik", "testLastName", "mikwit8",
+                "pass", Roles.ADMIN.toString(), "test8@gmail.com", "500600700", "");
 
         //when
         doThrow(new BadRequestException("Username", userSaveDTO.username(), true))

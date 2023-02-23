@@ -34,6 +34,7 @@ import javax.sql.DataSource;
 
 import static com.example.spring17.utils.ConstantURL.*;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
@@ -63,13 +64,15 @@ public class SecurityConfig {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager);
         customAuthenticationFilter.setFilterProcessesUrl(LOGIN_URL);
 
+        //return http.build();
+
         return http
                 .csrf().disable() //comment to make cookies working
                 //.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
                 .cors().disable()
                 //.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 //.and()
-                //.formLogin(v -> v.defaultSuccessUrl(AFTER_SUCCESSFUL_LOGIN_URL, true))
+                .formLogin(v -> v.defaultSuccessUrl(AFTER_SUCCESSFUL_LOGIN_URL, true))
                 .httpBasic()
                 .and()
                 .formLogin(v -> v.defaultSuccessUrl(AFTER_SUCCESSFUL_LOGIN_URL, true))
@@ -82,11 +85,13 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .antMatchers(LOGIN_URL+"/**", REFRESH_TOKEN_URL+"/**").permitAll() //REFRESH_TOKEN_URL
-                .antMatchers(USER_URL+"/all/**", USER_URL+"/pagination/**").permitAll()
+                .antMatchers(USER_URL+"/**").permitAll() //test
                 .antMatchers(GET, CURIOSITY_URL+"/**").permitAll()
+                .antMatchers(POST, USER_URL+"/**").permitAll() //test
+                .antMatchers(POST, CURIOSITY_URL+"/**").permitAll() //test
                 .antMatchers(AUTH_SWAGGER_WHITELIST).permitAll()
                 .antMatchers(USER_URL+"/**").hasAnyAuthority(Roles.ADMIN.toString())
-                .anyRequest().authenticated()
+                .anyRequest().authenticated() //test
                 .and()
                 .authenticationManager(authenticationManager)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

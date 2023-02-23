@@ -80,7 +80,7 @@ public class UserValidator {
     }
 
     private void validateName(String name){
-        Pattern p = Pattern.compile("\\b([A-Z]\\w*)\\b");
+        Pattern p = Pattern.compile("([A-Za-z-]+)"); //"\\b([A-Z]\\w*)\\b"
         Matcher matcher = p.matcher(name);
         if(name.length() < 2 || !matcher.matches()){
             throw new BadRequestException("Name", name, false);

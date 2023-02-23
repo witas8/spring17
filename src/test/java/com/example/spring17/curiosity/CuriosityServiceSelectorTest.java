@@ -39,12 +39,13 @@ public class CuriosityServiceSelectorTest {
     @Mock
     CuriosityRepo curiosityRepo;
 
+
     @Test
     void shouldGetUserByCuriosityQuestion(){
         //given
         User user = new User(102L, "mik", "testLastName",
                 "mikwit8", "testPassword", Roles.ADMIN,
-                "test88@gmail.com", "500600700");
+                "test88@gmail.com", "500600700", "");
         Curiosity curiosity = new Curiosity(103L, user, Categories.BIOLOGY,
                 "que", "ans", false, 10, OffsetDateTime.now());
 

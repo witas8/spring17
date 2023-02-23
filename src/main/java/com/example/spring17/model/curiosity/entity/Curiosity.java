@@ -33,11 +33,11 @@ public class Curiosity {
     private String answer;
     private Boolean accepted;
     private Integer likes;
-    private OffsetDateTime createDate;
+    private OffsetDateTime date; //createDate
 
     @PrePersist
     void prePersist() {
-        this.createDate = OffsetDateTime.now();
+        this.date = OffsetDateTime.now();
     }
 }
 

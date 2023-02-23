@@ -1,8 +1,10 @@
 package com.example.spring17.model.user.entity;
 
+import com.example.spring17.model.curiosity.entity.Curiosity;
 import lombok.*;
 import org.springframework.lang.Nullable;
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -32,5 +34,7 @@ public class User {
     @Column(unique=true)
     private String email;
     private String phone;
+
+    private String likedCuriosityIds;
 
 }

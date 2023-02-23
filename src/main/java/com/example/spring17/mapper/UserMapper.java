@@ -44,6 +44,7 @@ public class UserMapper {
                 .role(Enum.valueOf(Roles.class, userSaveDTO.role()))
                 .email(userSaveDTO.email())
                 .phone(userSaveDTO.phone())
+                .likedCuriosityIds(userSaveDTO.likedCuriosityIDs())
                 .build();
     }
 
@@ -67,6 +68,7 @@ public class UserMapper {
                 user.getUsername(),
                 user.getRole().toString(),
                 user.getEmail(),
-                user.getPhone());
+                user.getPhone(),
+                user.getLikedCuriosityIds());
     }
 }

@@ -46,8 +46,8 @@ public class UserServiceUpdaterTest {
 //        given(userRepo.findById()).willReturn()
 
         //given
-        User user = new User(5L, "a", "b", "c", "d", Roles.ADMIN, "f", "g");
-        UserDTO userDTO = new UserDTO(5L, "a", "b", "c", Roles.ADMIN.toString(), "f", "g");
+        User user = new User(5L, "a", "b", "c", "d", Roles.ADMIN, "f", "g", "h");
+        UserDTO userDTO = new UserDTO(5L, "a", "b", "c", Roles.ADMIN.toString(), "f", "g", "h");
         given(userRepo.findById(5L)).willReturn(Optional.of(user));
         given(userRepo.save(user)).willReturn(user);
 

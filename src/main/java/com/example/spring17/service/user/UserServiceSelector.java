@@ -41,13 +41,6 @@ public class UserServiceSelector {
         user.setLastName("wit");
         Example<User> userExample = Example.of(user);
 
-        System.out.println(userRepo.findAll(
-                userExample,
-                        PageRequest.of(page, limit).withSort(Sort.by(
-                                isAscending ? Sort.Direction.ASC : Sort.Direction.DESC,
-                                param)
-                        ))
-                .map(userMapper::mapUserToDTO));
 
         return userRepo.findAll(
                     userExample,

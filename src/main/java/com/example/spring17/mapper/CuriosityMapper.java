@@ -34,7 +34,7 @@ public class CuriosityMapper {
                 curiosity.getAnswer(),
                 curiosity.getAccepted(),
                 curiosity.getLikes(),
-                curiosity.getCreateDate()
+                curiosity.getDate()
                 );
     }
 
@@ -47,17 +47,7 @@ public class CuriosityMapper {
                 .answer(curiosity.getAnswer())
                 .accepted(curiosity.getAccepted())
                 .likes(curiosity.getLikes())
-                .date(curiosity.getCreateDate())
+                .date(curiosity.getDate())
                 .build();
-        /*return new CuriosityDTO(
-                curiosity.getId(),
-                curiosity.getUser(),
-                curiosity.getCategory(),
-                curiosity.getQuestion(),
-                curiosity.getAnswer(),
-                curiosity.isAccepted(),
-                curiosity.getLikes(),
-                curiosity.getDate()
-        );*/
     }
 }
