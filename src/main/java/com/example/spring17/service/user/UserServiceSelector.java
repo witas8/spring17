@@ -36,6 +36,7 @@ public class UserServiceSelector {
                 .collect(Collectors.toList());
     }
 
+    ///test
     public Page<UserDTO> getAllUsersWithPagination(int page, int limit, String param, boolean isAscending){
         User user = new User();
         user.setLastName("wit");

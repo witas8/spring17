@@ -28,7 +28,7 @@ public class Curiosity {
 
     @Enumerated(EnumType.STRING)
     private Categories category;
-    @Column(unique=true)
+    @Column(unique=true, columnDefinition="text", length = 1024)
     private String question;
     private String answer;
     private Boolean accepted;

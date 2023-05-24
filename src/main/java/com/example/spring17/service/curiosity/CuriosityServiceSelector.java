@@ -18,10 +18,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -106,6 +103,8 @@ public class CuriosityServiceSelector {
         //Pageable pageable = PageRequest.of(0,1, (Sort.by(Sort.Direction.DESC, "id")));
         //Pageable pageable = PageRequest.of(0, 1).withSort(Sort.by(Sort.Direction.DESC, "id"));
         //return new PageImpl<>(likedCuriosityList, pageable, 1); //likedCuriosityList.size()
+
+        //likedCuriosityList.sort(Comparator.comparing(CuriosityDTO::date).reversed());
         return likedCuriosityList;
     }
 
